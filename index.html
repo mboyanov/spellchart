@@ -55,22 +55,28 @@ var draw = function(books){
 		}
 	}
 	var i =0;
+	var myLegend = "<ul>";
 	for (var spell in spells){
 		finaldata.push({
 			value:spells[spell],
 			color:getColor(i),
 			highlight:getHighColor(i),label:spell
-		})
+		});
+		myLegend+= "<li><span style='background-color:"+getColor(i)+"'>" + spell + "</span>" 
 		i++;
 	}
 	var ctx = document.getElementById("chart").getContext("2d");
 	var chart = new Chart(ctx).Doughnut(finaldata);
+	$('#myLegend').html(myLegend);
+
 }
 
 var redraw = function(){
 	$('#chart').remove(); // this is my <canvas> element
-  	$('body').append('<canvas id="chart" width="1280" height="400" style="float:left;"></canvas>');
+	$('#myLegend').remove();
+  	$('center').append('<canvas id="chart" width="1280" height="400" style="float:left;"></canvas>');
 	var request = $('input').filter(function(){return this.checked});
+	$('center').append('<span id="myLegend" style="float:left"/>')
 	request = request.map(function(item) { 
 		var index = request[item].name.substr(2);
 		return parseInt(index);})
@@ -95,7 +101,8 @@ function getHighColor(index) {
 <center> <h1> Harry Potter Spell Usage by Books </h1>
 <span id ="legend" style="float:left;"> </span>
 	
-	<canvas id="chart" width="1280" height="400" style="float:left;"></canvas>
-	</center>
+<canvas id="chart" width="1280" height="400" style="float:left;"></canvas>
+<span id="myLegend" style="float:left"/>
+</center>
 </body>
 </html>
