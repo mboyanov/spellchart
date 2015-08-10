@@ -1,1 +1,102 @@
-My Page
+<html>
+<head>
+	<script src="Chart.min.js"></script>
+	<script src="out.json"> </script>
+	<script src = "https://code.jquery.com/jquery-2.1.4.min.js"> </script>
+	<title> Movie History </title>
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-48846667-5', 'auto');
+	  ga('send', 'pageview');
+
+	</script>
+</head>
+
+<script type="text/javascript">
+
+
+var init = function(){
+	var initial = [1,2,3,4,5,6,7];
+	draw(initial);
+	
+	var legend ="";
+  	for (var book in labelMap){
+  		legend+='<span>'
+  		legend += labelMap[book] + "<input type='checkbox' onclick='redraw()' name='"+book+"'";
+  		if (initial.indexOf(parseInt(book.substr(2)))>=0)
+		{
+			legend += ' checked'
+		}
+  		legend += "></span><br>";
+  	}
+  	$('#legend').append(legend);
+
+}
+
+labelMap = {'hp1':"Harry Potter and the Philosopher's Stone",
+	"hp2":"Harry Potter and the Chamber of Secrets","hp3":"Harry Potter and the Prisoner of Azkaban","hp4":"Harry Potter and the Goblet of Fire","hp5":"Harry Potter and the Order of the Phoenix","hp6":"Harry Potter and the Half-Blood Prince","hp7":"Harry Potter and the Deathly Hallows"}
+var draw = function(books){
+	var finaldata = [];
+	var counts = {}
+	var spells = {}
+	for (var spell in data['hp1']){
+		spells[spell] = 0;
+	}
+	for (var index in books)
+	{
+		var currentBook = data['hp'+books[index]];
+		for (var spell in currentBook)
+		{
+			spells[spell] += currentBook[spell]
+		}
+	}
+	var i =0;
+	for (var spell in spells){
+		finaldata.push({
+			value:spells[spell],
+			color:getColor(i),
+			highlight:getHighColor(i),label:spell
+		})
+		i++;
+	}
+	var ctx = document.getElementById("chart").getContext("2d");
+	var chart = new Chart(ctx).Doughnut(finaldata);
+}
+
+var redraw = function(){
+	$('#chart').remove(); // this is my <canvas> element
+  	$('body').append('<canvas id="chart" width="1280" height="400" style="float:left;"></canvas>');
+	var request = $('input').filter(function(){return this.checked});
+	request = request.map(function(item) { 
+		var index = request[item].name.substr(2);
+		return parseInt(index);})
+	draw(request);
+}
+
+function getColor(index) {
+    var h = 60+30*index;
+    var s = 50;
+    var l = 80;
+    return 'hsl(' + h + ',' + s + '%,' + l + '%)';
+}
+
+function getHighColor(index) {
+    var h = 60+30*index;
+    var s = 80;
+    var l = 80;
+    return 'hsl(' + h + ',' + s + '%,' + l + '%)';
+}
+</script>
+<body onload="init()">
+<center> <h1> Movie History </h1>
+<h3> or how comedy has dwarfed all other genres </h3>
+<span id ="legend" style="float:left;"> </span>
+	
+	<canvas id="chart" width="1280" height="400" style="float:left;"></canvas>
+	</center>
+</body>
+</html>
